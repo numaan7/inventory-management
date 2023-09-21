@@ -1,0 +1,32 @@
+{
+	"name":"SN Collections",
+	"short_name":"SN APP",
+	"start_url":"/",
+	"display":"standalone",
+    "orientation": "natural",
+	"background_color":"white",
+	"theme_color":"#F8F9FA",
+    "dir": "auto",
+    "lang": "en-US",
+    "prefer_related_applications": false,
+    "related_applications": [],
+	"scope": "/",
+	"description":"We Have A Collection For Traditional , Fancy , Wedding, Western and Cotton Suit Dressed For Womens and Childrens. So, Visit Here For Quality Clothes in Meaningful Price.",
+	"icons":[
+	{
+	"src":"images/icons/android-chrome-192x192.png",					
+	"sizes":"192x192",
+	"type":"image/png"
+	},
+	{
+	"src":"images/icons/android-chrome-512x512.png",
+	"sizes":"512x512",
+	"type":"image/png"
+	},
+    {      
+    "src": "images/icons/apple-touch-icon.png",
+        "type": "image/png",      
+        "sizes": "180x180"    
+    }  
+]
+}

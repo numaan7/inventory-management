@@ -1,0 +1,454 @@
+{% extends 'base.html' %}
+{% load cart_tag %}
+{% block title %}Invoice{% endblock title %}
+{% block body %}
+<div style="margin-top:90px;" class="container">
+  <div class="card mt-4 mb-4">
+    <div class="card-header">
+
+      <span class="float-right mx-3"> <strong>Invoice No:</strong> {{invoice}}</span>
+      <span class="float-right mx-3"> <strong>PO No:</strong> PO0{{invoice}}</span>
+      Invoice Items: <strong>({{request.session.cart|length}})
+      </strong>
+
+
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-sm-6">
+          <h6 class="mb-3">From:</h6>
+          <div>
+            <strong>SN Collection</strong>
+          </div>
+          <div>Opposite Malapally Masjid </div>
+          <div>9-18-369 Malapally, Nizamabad 503001</div>
+          <div>Email: sncollection@gmail.com</div>
+          <div>Phone: +91 996 386 0432</div>
+          <div class="m-4">
+            <!-- Example single danger button -->
+            <div class="btn-group">
+              <button type="button" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                + Add Product
+              </button>
+              <ul class="dropdown-menu" id="list">
+                </li>
+                <li><input class="form-control" oninput="handleSearch()" type="text" id="searchInput"
+                    placeholder="Search product..."></li>
+
+                {% for product in products %}
+                </li>
+                <li><a class="dropdown-item" href="/cart/add/{{product.id}}/">{{product.name}} | Max Qty:
+                    {{product.quantity}}</a></li>
+                {% endfor %}
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-sm-6">
+          <h6 class="mb-3">To:</h6>
+          <div>
+            <div class="btn-group">
+
+              <button type="button" class="btn btn-primary m-1 dropdown-toggle" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                Select Customer
+              </button>
+              <!-- Button trigger modal -->
+              <button type="button" class="btn btn-primary m-1 rounded" data-bs-toggle="modal"
+                data-bs-target="#exampleModal">
+                Create Customer
+              </button>
+              <button type="button" class="btn btn-primary m-1 rounded" data-bs-toggle="modal"
+                data-bs-target="#exampleModal1">
+                Update Customer
+              </button>
+
+              <!-- Modal -->
+              <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel"
+                aria-hidden="true">
+                <div class="modal-dialog">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h1 class="modal-title fs-5" id="exampleModalLabel">Create User</h1>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form action="/create-customer" method="post">
+                      {% csrf_token %}
+                      <div class="modal-body">
+                        <div class="mb-3">
+                          <label for="exampleFormControlInput1" class="form-label">Full Namae</label>
+                          <input type="text" required class="form-control" name="name" placeholder="Full Name">
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleFormControlInput1" class="form-label">Phone</label>
+                          <input type="tel" required name="phone" class="form-control" placeholder="+91 123 456 7890">
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                          <input type="email" name="email" class="form-control" placeholder="name@example.com">
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleFormControlInput1" class="form-label">Whatsapp Number</label>
+                          <input type="tel" name="whatsapp" class="form-control" placeholder="+91 123 456 7890">
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleFormControlInput1" class="form-label">GST Number</label>
+                          <input type="text" name="gst" class="form-control" placeholder="GST Number">
+                        </div>
+                        <div class="mb-3">
+                          <label for="exampleFormControlTextarea1" class="form-label">Address</label>
+                          <textarea class="form-control" name="address" rows="3"></textarea>
+                        </div>
+                      </div>
+                      <input type="hidden" name="url" value="{% url 'invoice' %}">
+
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Modal -->
+            <div class="modal fade" id="exampleModal1" tabindex="-1" aria-labelledby="exampleModalLabel"
+              aria-hidden="true">
+              <div class="modal-dialog">
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="exampleModalLabel">Update Customer</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                  </div>
+                  <form action="/create-customer" method="post">
+                    {% csrf_token %}
+                    <div class="modal-body">
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Full Namae</label>
+                        <input type="text" value="{{customer.name}}" required class="form-control" name="name"
+                          placeholder="Full Name">
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Phone</label>
+                        <input readonly type="tel" required value="{{customer.phone}}" name="phone" class="form-control"
+                          placeholder="+91 123 456 7890">
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Email address</label>
+                        <input type="email" value="{{customer.email}}" name="email" class="form-control"
+                          placeholder="name@example.com">
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">Whatsapp Number</label>
+                        <input type="tel" value="{{customer.whatsapp}}" name="whatsapp" class="form-control"
+                          placeholder="+91 123 456 7890">
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleFormControlInput1" class="form-label">GST Number</label>
+                        <input type="text" value="{{customer.gst_no}}" name="gst" class="form-control"
+                          placeholder="GST Number">
+                      </div>
+                      <div class="mb-3">
+                        <label for="exampleFormControlTextarea1" class="form-label">Address</label>
+                        <textarea class="form-control" name="address" rows="3">{{customer.address}}</textarea>
+                      </div>
+                    </div>
+                    <input type="hidden" name="url" value="{% url 'invoice' %}">
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                      <button type="submit" class="btn btn-primary">Save changes</button>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <ul class="dropdown-menu" id="list1">
+
+            </li>
+            <li><input class="form-control" oninput="handleSearch1()" type="text" id="searchInput1"
+                placeholder="Search product..."></li>
+
+            {% for customer in customers %}
+            </li>
+            <li><a class="dropdown-item" href="/add/customer/{{customer.id}}/">{{customer.name}}</a></li>
+            {% endfor %}
+          </ul>
+        </div>
+
+      </div>
+
+      <textarea class="form-control" required name="invoiceaddress" id="" cols="30" rows="6">
+{{customer.name|title}}
+{% if customer.phone %}
+Phone: +91{{customer.phone}}{% endif %}
+{% if customer.address %}
+{{customer.address}}{% endif %}
+{% if customer.email  %}
+Email: {{customer.email}}{% endif %}
+
+</textarea>
+
+
+
+    </div>
+
+    <div class="table-responsive-sm">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+
+            <th>Item</th>
+
+            <th class="right">₹ Unit Price</th>
+            <th class="center">Qty</th>
+            <th class="right"> ₹ Total</th>
+            <th class="right">Actions</th>
+
+          </tr>
+        </thead>
+        <tbody>
+          {% for key,value in request.session.cart.items %}
+
+          <tr>
+            <form action="/update/{{value.product_id}}/" method="post">
+              {% csrf_token %}
+
+              <td class="left strong">{{value.name|title}} </td>
+
+              <td class="right"> <input name="price" class="form-control" type="number" value="{{value.price}}"></td>
+              <td class="center "><input name="quantity" max="{{value.maxqty}}" class="form-control" type="number"
+                  value="{{value.quantity}}"> </td>
+              <td class="right">₹ <strong>{{ value.price|multiply:value.quantity }}</strong></td>
+              <td class="center"><button type='submit' class="btn btn-primary"
+                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Update</button><a
+                  href="/cart/item_clear/{{value.product_id}}/" class="btn btn-danger mx-2 my-1"
+                  style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">Remove</a>
+              </td>
+            </form>
+          </tr>
+
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <div class="row">
+      <div class="col-lg-4 col-sm-5">
+        <h4><strong>({{request.session.cart|length}}) Items</strong></h4>
+      </div>
+
+
+      <div class="col-lg-4 col-sm-5 ml-auto">
+        <table class="table table-clear">
+          <tbody>
+            <tr>
+              <form action="/generate-invoice" method="post">
+                {% csrf_token %}
+                <td class="left">
+                  <strong>Subtotal</strong>
+                </td>
+                <td class="right">₹{{cart_total_amount}}</td>
+                <input type="hidden" name="invoicesubtotal" value="{{cart_total_amount}}">
+            </tr>
+            <tr>
+              <td class="left">
+
+                <strong>Discount (₹)</strong>
+
+
+              </td>
+              <td class="right"><input oninput="doThing()" min="0" id="disprc" name="discountint" class="form-control"
+                  type="number" value="0"></td>
+            </tr>
+            <tr>
+              <td class="left">
+
+                <strong>Discount (<strong id="discountper">0%</strong>)</strong>
+
+
+              </td>
+              <td class="right" id="discount"><input name="discount" min=0 readonly class="form-control" type="text"
+                  value="0"></td>
+            </tr>
+            <tr>
+              <td class="left">
+                <strong>GST (%)<input type="number" min="0" oninput="doThing()" id="taxamt" value="18"
+                    style="width:50px;"></strong>
+              </td>
+              <td id='tax' class="right">₹0</td>
+              <input type="hidden" id="invoicetax" value="" name="invoicetax">
+            </tr>
+            <tr>
+              <td class="left">
+                <strong>Total</strong>
+              </td>
+              <td class="right">
+                <strong id="total">₹0</strong>
+                <input type="hidden" id="invoicetotal" value="" name="invoicetotal">
+                <input type="hidden" id="invoiceno" value="{{invoice}}" name="invoiceno">
+                <input type="hidden" id="po" value="PO0{{invoice}}" name="po">
+                <input type="hidden" id="items" value="{{request.session.cart|length}}" name="items">
+              </td>
+            </tr>
+            <tr>
+              <td class="left">
+                <input id="allpaid" oninput="paycheck()" type="checkbox"> If all paid <br>
+
+                <strong>Paid (₹)</strong>
+
+
+              </td>
+              <td class="right"><input required oninput="paycheck()" max="" required min='0' id="paid" name="paid"
+                  class="form-control" type="number" value="0"></td>
+            </tr>
+            <tr>
+            <tr>
+              <td class="left">
+
+                <strong>Due (₹)</strong>
+
+
+              </td>
+              <td class="right"><input required oninput="paycheck()" required min='0' id="due" name="due"
+                  class="form-control" type="number" value="0"></td>
+            </tr>
+            <tr>
+
+          </tbody>
+        </table>
+        {% if request.session.cart|length > 0 %}
+       {% if request.session.customer > '0' %}
+        <button class="btn btn-primary text-center w-100" type="submit">Generate Invoice</button>
+        {% endif %}
+        {% endif %}
+        </form>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+</div>
+<script>
+  /* Event listener */
+
+
+
+  /* Function */
+  let tax = 0
+  let taxamt = 18
+  let discount = 0
+  let finalpr = 0
+  let semiprice = 0
+  let subtotal = parseInt({{ cart_total_amount }})
+
+
+
+
+
+
+
+
+  invoicefinal = document.querySelector('#invoicetotal')
+  invoicetax = document.querySelector('#invoicetax')
+  taxelemnt = document.querySelector('#tax')
+  final = document.querySelector('#total')
+  tax = (subtotal * (taxamt / 100))
+  taxelemnt.innerHTML = '₹' + tax.toFixed(2);
+  invoicetax.value = tax.toFixed(2);
+  semiprice = subtotal + tax
+  final.innerHTML = '₹' + semiprice.toFixed(2);
+  invoicefinal.value = semiprice.toFixed(2);
+  function doThing() {
+    taxamount = document.querySelector("#taxamt").value
+    console.log(taxamount)
+    taxamt = taxamount
+
+    disprc = document.querySelector("#disprc").value
+    discount = (subtotal - parseInt(disprc))
+    document.getElementsByName('discount')[0].value = discount;
+    disper = document.querySelector('#discountper')
+
+
+    console.log("changed");
+    discountpercentage = Math.round(((parseInt(disprc) / subtotal)) * 100)
+    disper.innerHTML = discountpercentage + '%'
+    final.innerHTML = "₹" + discount
+    tax = (discount * (taxamt / 100))
+    taxelemnt.innerHTML = '₹' + tax.toFixed(2);
+    invoicetax.value = tax.toFixed(2);
+    semiprice = discount + tax
+    final.innerHTML = '₹' + semiprice.toFixed(2);
+    invoicefinal.value = semiprice.toFixed(2);
+    paid.value = Math.round(semiprice.toFixed(2))
+
+
+
+  };
+  var dueamt = 0
+  var due = document.querySelector('#due')
+  var paid = document.querySelector('#paid')
+  var allpaid = document.querySelector('#allpaid')
+  paid.value = Math.round(invoicefinal.value)
+  paid.max = invoicefinal.value
+  function paycheck() {
+
+    dueamt = semiprice - (paid.value)
+    due.value = Math.round(dueamt.toFixed(2))
+    if (allpaid.checked) {
+      paid.value = Math.round(semiprice.toFixed(2))
+      due.value = 0
+
+    }
+
+
+  };
+
+
+
+
+  function handleSearch() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const listItems = document.querySelectorAll('#list li a');
+
+    listItems.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(searchInput)) {
+        item.style.display = 'block';
+
+
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  };
+
+  // Attach event listener to the search input
+  document.getElementById('searchInput1').addEventListener('input', handleSearch);
+
+  function handleSearch1() {
+    const searchInput = document.getElementById('searchInput1').value.toLowerCase();
+    const listItems = document.querySelectorAll('#list1 li a');
+
+    listItems.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(searchInput)) {
+        item.style.display = 'block';
+
+
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  };
+
+  // Attach event listener to the search input
+  document.getElementById('searchInput1').addEventListener('input', handleSearch);
+
+ // Function to format single-digit numbers with leading zeros
+
+</script>
+{% endblock body %}

@@ -1,0 +1,236 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Sn Collection - Choose your fashion{% endblock title %}
+{% block body %}
+<style>
+  
+    .about-us-section {
+            background-color: #f9f9f9;
+            padding: 60px 0;
+        }
+
+        .about-us-section h2 {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .about-us-section p {
+            font-size: 18px;
+            line-height: 1.6;
+            max-width: 600px;
+          
+        }
+       
+        .about-us-img img{
+          
+
+          
+        }
+
+       
+  .crouselimg {
+    height: 400px;
+    object-fit: cover;
+  }
+
+  
+  .gallery-img{
+   height:200px;
+   object-fit: cover;
+  }
+  .contact-us-section {
+            background-color: #f9f9f9;
+            padding: 60px 0;
+        }
+
+        .contact-us-section h2 {
+            font-size: 36px;
+            margin-bottom: 30px;
+        }
+
+        .contact-us-section p {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .map-section {
+            padding-top: 30px;
+        }
+
+        /* Add any additional styling for the map section here */
+        .map-section img {
+            max-width: 100%;
+            height: auto;
+        }
+</style>
+
+<section class="hero py-5 mt-5">
+  <div class="container text-center">
+    <h1 class="display-4">Welcome to Our Cloth Shop</h1>
+    <p class="lead">Discover the latest trends in fashion and find your style.</p>
+    <a href="https://wa.me/+919963860432" class="btn btn-primary btn-lg">Chat us on <i class="fab fa-whatsapp" style="color: #ffffff;"></i></a>
+  </div>
+</section>
+<!-- Icons Section -->
+<section class="icons-section py-5 bg-light">
+  <div class="container text-center">
+    <div class="row">
+      <div class="col-md-4">
+     <h1><i class="fas fa-box fa-lg"></i></h1>
+        <h4>Quality Products</h4>
+        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+      </div>
+      <div class="col-md-4">
+       <h1><i class="fas fa-gifts fa-lg"></i></h1>
+        <h4>Gift Wrapping</h4>
+        <p>Free gift wrapping with every purchase.</p>
+      </div>
+      <div class="col-md-4">
+       <h1><i class="fas fa-truck-loading fa-lg"></i></h1> 
+        <h4>Fast Delivery</h4>
+        <p>Get your orders delivered quickly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- Modal gallery -->
+
+  <h2 id="gallery" class="text-center my-4">Gallery</h2>
+  <!-- Section: Images -->
+  <section class="container my-4">
+    <div class="row">
+      <div class="col-lg-4 col-md-12 mb-4 mb-lg-0">
+        <div
+          class="bg-image hover-overlay ripple shadow-1-strong rounded"
+          data-ripple-color="light"
+        >
+          <img
+            src="https://images.unsplash.com/photo-1479812627010-aa5bd9d173b1?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTh8fGluZGlhbiUyMHRyYWRpdGlvbmFsJTIwZHJlc3N8ZW58MHwwfDB8fHww&auto=format&fit=crop&w=356&q=200"
+            class="w-100 gallery-img"
+          />
+          <a href="#!" data-mdb-toggle="modal" data-mdb-target="#exampleModal1">
+            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2);"></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <div
+          class="bg-image hover-overlay ripple shadow-1-strong rounded"
+          data-ripple-color="light"
+        >
+          <img
+            src="https://media.istockphoto.com/id/1219062770/photo/portrait-of-a-woman-in-a-traditional-indian-outfit.webp?b=1&s=170667a&w=0&k=20&c=0LjK-ykS9IobnJcwMLMpK2iycHMtgsTx4FaBKKBRacU="
+            class="w-100 gallery-img"
+          />
+          <a href="#!" data-mdb-toggle="modal" data-mdb-target="#exampleModal2">
+            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2);"></div>
+          </a>
+        </div>
+      </div>
+
+      <div class="col-lg-4 mb-4 mb-lg-0">
+        <div
+          class="bg-image hover-overlay ripple shadow-1-strong rounded"
+          data-ripple-color="light"
+        >
+          <img
+            src="https://media.istockphoto.com/id/1290304564/photo/portrait-of-very-beautiful-young-indian-bride-in-luxurious-bridal-costume-with-makeup-and.webp?b=1&s=170667a&w=0&k=20&c=1zkJd1I0EDnxI9RVK_rHOsYjnoUlOgCkiEdCrA7IZro="
+            class="w-100 gallery-img"
+          />
+          <a href="#!" data-mdb-toggle="modal" data-mdb-target="#exampleModal3">
+            <div class="mask" style="background-color: rgba(251, 251, 251, 0.2);"></div>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+  <!-- Section: Images -->
+
+<!-- Modal gallery -->
+<section class="about-us-section">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <h2 id="about-us">About Us</h2>
+        
+        
+        <p>Discover exquisite attire that blends tradition and style at SN Collection. Explore Indian traditional, fancy, wedding, western, and cotton suits for women and children. Experience fashion that's affordable yet high-quality, reflecting the latest trends.</p>
+        <details>
+      <ul class="collection-list">
+        <li>Indian Traditional, Fancy, Wedding, Western, and Cotton Suits for Women and Children</li>
+        <li>Unparalleled Assortment of Clothing</li>
+        <li>Passion for Fashion and Quality</li>
+        <li>Curated Selection of Colors, Patterns, and Textures</li>
+        <li>Wedding Collection - Opulence and Grace</li>
+        <li>Fancy and Cotton Suits - Comfort and Style</li>
+        <li>Children's Line - Setting the Stage for Style</li>
+    </ul>
+    </details>
+      </div>
+      <div class="col-sm-6 text-center">
+        <img src="{% static "images/logo.png" %}" width="200px" alt="About Us Image" class="mt-3 rounded mx-auto ">
+      </div>
+
+    </div>
+  </div>
+</section>
+<section class="contact-us-section">
+  <div class="container">
+      <div class="row">
+          <div class="col-sm-5">
+              <h2 id="details" >Our Details</h2>
+              <p>
+                  For any inquiries or questions, please fill out the form below or contact us using the provided details:
+              </p>
+              <p>
+                  Email: <a href="mailto:sncollection2016@gmail.com">sncollection2016@gmail.com</a> <br>
+                  Phone: <a href="tel:+919963860432"> +91 (996) 386-0432</a><br>
+                  Address: Malapally street, Nizamabad, India
+              </p>
+          </div>
+          <div class="col-sm-5 map-section">
+              <!-- Replace the image source with your map or business address image -->
+              <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d120954.61156192147!2d77.9373719433594!3d18.671550800000002!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bcddbbe8587be25%3A0x186ce0ce17f8f12d!2sS%20N%20Collection!5e0!3m2!1sen!2sin!4v1691302234998!5m2!1sen!2sin" width="100%" height="100%" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+          </div>
+      </div>
+  </div>
+</section>
+<section >
+  <div class="container my-3">
+    <h2 id="contact-us" class="mb-2"> Contact Us</h2>
+<form class="mt-2" action="." method="post">
+  {% csrf_token %}
+    <div class="mb-3  ">
+      <label for="exampleFormControlInput1" class="form-label">Name</label>
+      <input type="text" required name="name" class="form-control" id="exampleFormControlInput1" placeholder="Name">
+    </div>
+    <div class="mb-3  ">
+      <label for="exampleFormControlInput1" class="form-label">Phone</label>
+      <input type="tel" name="phone" required class="form-control" id="exampleFormControlInput1" placeholder="+91 (123) 456 7890">
+    </div>
+    <div class="mb-3  ">
+      <label for="exampleFormControlInput1" class="form-label">Email address</label>
+      <input type="email" name="email" class="form-control" id="exampleFormControlInput1" placeholder="name@example.com">
+    </div>
+    <div class="mb-3">
+      <label for="exampleFormControlTextarea1" class="form-label">Message</label>
+      <textarea class="form-control" required placeholder="enter your message" name="message" id="exampleFormControlTextarea1" rows="3"></textarea>
+    </div>
+    <button class="btn btn-primary" type="submit"><i class="far fa-envelope" style="color: #ffffff;"></i> Send Message</button>
+  </form>
+  </div>
+</section>
+<section class="hero py-5 about-us-section">
+  <div class="container text-center">
+    <h3 class=" my-2" ><i class="fas fa-phone-volume"></i>  Get a call back!</h3>
+<form action="." method="post">
+  {% csrf_token %}
+    <div class="input-group   m-auto my-5 ">
+      <input type="tel" class="form-control " pattern="[0-9]{10}" required name='contact' placeholder="+91 (123) 456 7890"  aria-describedby="button-addon2">
+      <button class="btn btn-primary" type="submit" id="button-addon2"><i class="fas fa-phone"></i> Call back</button>
+    </div>
+</form>
+  </div>
+</section>
+{% endblock body %}

@@ -1,0 +1,178 @@
+{% load static %}
+<style>
+  .qr-img {
+    width: 100%;
+    max-width: 300px;
+
+  }
+
+  .qr-img img {
+    width: 100%;
+  }
+</style>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet"
+  integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"
+  integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg=="
+  crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<button class="btn btn-primary text-center  w-100 p-2 m-4" id="download-button">Download as PDF</button>
+
+<div id="invoice" class="m-3">
+  <h2 class="text-center"><strong>Invoice No #{{invoice.invoice_no}}</strong></h2>
+  <div class="card">
+    <div class="card-header d-flex justify-content-between">
+      <span>Invoice No: <strong>{{invoice.invoice_no}}</strong></span>
+      <span>PO No: <strong>{{invoice.po_number}}</strong></span>
+      <span>Date: <strong>{{invoice.date}}</strong></span>
+      <span>Status: <strong>{{invoice.invoice_status}}</strong></span>
+
+
+    </div>
+    <div class="card-body">
+      <div class="row mb-4">
+        <div class="col-sm-6">
+          <h6 class="mb-3">From:</h6>
+          <div>
+            <strong>SN Collection</strong>
+          </div>
+          <div>Opposite Malapally Masjid </div>
+          <div>9-18-369 Malapally, Nizamabad 503001</div>
+          <div>Email: sncollection@gmail.com</div>
+          <div>Phone: +91 996 386 0432</div>
+        </div>
+        <br>
+        <div class="col-sm-6">
+          <h6 class="mb-3">To:</h6>
+          <div>
+            <strong>{{invoice.customer.name}}</strong>
+          </div>
+          <div>Address: {{invoice.customer.address}}</div>
+
+          <div>Email: {{invoice.customer.email}}</div>
+          <div>Phone: +91 {{invoice.customer.phone}}</div>
+        </div>
+
+
+
+      </div>
+
+      <div class="table-responsive-sm">
+        <table class="table table-striped">
+          <thead>
+            <tr>
+
+              <th>Item</th>
+
+              <th class="right">Unit Cost</th>
+
+              <th class="center">Qty</th>
+
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in invoice.invoice_items.all %}
+            <tr>
+
+              <td class="left strong">{{product.product.name|title}}</td>
+
+
+              <td class="right">₹ {{product.price}}</td>
+              <td class="center">{{product.quantity}}</td>
+
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+      <div class="row">
+
+        <div class="col-lg-4 col-sm-5 ml-auto m-3 ">
+          {% if img_name %}
+          <img src="/static/images/{{ img_name }}" width="200px" alt="qr code">
+          {% endif %}
+        </div>
+        <div class="col-lg-4 col-sm-5 ml-auto">
+
+          <table class="table table-clear">
+            <tbody>
+              <tr>
+                <td class="left">
+                  <strong>Subtotal</strong>
+                </td>
+                <td class="right">₹ {{invoice.subtotal}}</td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <strong>Discount</strong>
+                </td>
+                <td class="right">₹ {{invoice.discount}}</td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <strong>TAX</strong>
+                </td>
+                <td class="right">₹ {{invoice.tax}}</td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <strong>Total</strong>
+                </td>
+                <td class="right">
+                  <strong>₹ {{invoice.total}}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <strong>Paid</strong>
+                </td>
+                <td class="right">
+                  <strong>₹ {{invoice.paid_amt}}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <strong>Due</strong>
+                </td>
+                <td class="right">
+                  <strong>₹ {{invoice.due_amt}}</strong>
+                </td>
+              </tr>
+              <tr>
+                <td class="left">
+                  <strong>Status</strong>
+                </td>
+                <td class="right {% if invoice.invoice_status == " Due" %}text-danger {% else %} text-success{% endif %}">
+                  <strong>{{invoice.invoice_status}}</strong>
+                </td>
+
+              </tr>
+            </tbody>
+          </table>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+  <p class='text-center'>Note: all these values are round up to their closest value (ex: if tax = 1.90 then here value
+    will be 2).</p>
+</div>
+
+
+<script>
+  const button = document.getElementById('download-button');
+
+  function generatePDF() {
+    // Choose the element that your content will be rendered to.
+    const element = document.getElementById('invoice');
+    // Choose the element and save the PDF for your user.
+    html2pdf().from(element).save("Invoice-{{invoice.po_number}}.pdf");
+  }
+
+  button.addEventListener('click', generatePDF);
+  generatePDF()
+</script>

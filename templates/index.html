@@ -1,0 +1,215 @@
+
+{% extends 'base.html' %}
+{% block title %}Inventory{% endblock title %}
+{% block body %}
+<style>
+  .costprice span{
+    display:none;
+  }
+  .costprice:after{
+content:'***';
+  }
+</style>
+
+<div style="margin-top:80px;" class="container  overflow-hidden">
+    <h1 class="my-6 text-center">ADD A PRODUCT</h1>
+<form action='/inventory' method='POST'>
+{% csrf_token %}
+    <div class="mb-3">
+      <label for="exampleInputEmail1" class="form-label">Product Name</label>
+      <input required type="text" name='product' class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+      
+    </div>
+    <div class="mb-3">
+      <label for="exampleInputPassword1" class="form-label">Quantity</label>
+      <input required type="number" min=0 name='quantity' class="form-control" id="exampleInputPassword1">
+    </div>
+    <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Price</label>
+        <input required type="number" min=0 name='price' class="form-control" id="exampleInputPassword1">
+      </div>
+
+      <div class="mb-3">
+        <label for="exampleInputPassword1" class="form-label">Cost</label>
+        <input required type="number" min=0 name='cost' class="form-control" id="exampleInputPassword1">
+      </div>
+    
+    <button type="submit" class="btn btn-primary">+ Add Product</button>
+  </form>
+  
+  <h1 class="m-4 text-center">PRODUCTS</h1>
+  <div style="overflow-x:auto;">
+  <table id="myTable" class="table table-hover my-5    " >
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col">Cost  {% if request.user.is_superuser %}<button class="btn" onclick="showcost()" id="show"><i class="far fa-eye"></i></button> {% endif %} </th>
+        <th scope="col">Total</th>
+        <th scope="col">Actions <button id="downloadButton" class="btn btn-primary mx-2" style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;" >Export</button></th>
+      </tr>
+    </thead>
+    <tbody class="serials" >
+        
+        {% for product in products %}
+
+      <tr class=" {% if product.quantity == 0 %}table-danger{% endif %} ">
+       
+        <th scope="row ">{{ forloop.counter }}</th>
+        <th scope="row ">{{product.name|title}}</th>
+
+<td>{{product.quantity}}</td>
+        <td >₹ {{product.price}}</td>
+        <td class="costprice costshow">₹ <span >{{product.buy_price}}</span></td>
+        <td>₹ {{product.total}}</td>
+        <td><button type="button" class="btn btn-primary m-2" data-bs-toggle="modal" data-bs-target="#exampleModal{{product.id}}"
+            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+     Edit
+    </button>
+   
+    <!-- Modal -->
+<div class="modal fade" id="exampleModal{{product.id}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Update Product</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form action='/{{product.id}}/update' method='POST'>
+          {% csrf_token %}
+              <div class="mb-3">
+                <label for="exampleInputEmail1" class="form-label">Product Name</label>
+                <input required type="text" value="{{product.name|title}}" name='product' class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+                
+              </div>
+              <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label">Quantity</label>
+                <input value="{{product.quantity}}" min=0 required type="number" name='quantity' class="form-control" id="exampleInputPassword1">
+              </div>
+              <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Price</label>
+                  <input value="{{product.price}}" min=0 required type="number" name='price' class="form-control" id="exampleInputPassword1">
+                </div>
+          
+                <div class="mb-3">
+                  <label for="exampleInputPassword1" class="form-label">Cost</label>
+                  <input value="{{product.buy_price}}" min=0 required type="number" name='cost' class="form-control " id="exampleInputPassword1">
+                </div>
+              
+              <button type="submit" class="btn btn-primary">Update</button>
+            </form>
+            
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+        
+      </div>
+    </div>
+  </div>
+</div>
+    <a href="/{{product.id}}/delete" class="btn btn-danger"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+ Delete
+</a>
+</td>
+
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot>
+      <tr> 
+        <th scope="col">#</th>
+        <th scope="col">Products : {{products|length}}</th>
+        <th scope="col">Total quantity : {{quantites}}</th>
+        <th scope="col">Total Price : ₹ {{total}}</th>
+        <th class="costprice costshow" scope="col">Total Cost : ₹ <span >{{totalcost}}</span></th>
+        <th scope="col">Sub Total : ₹ {{subtotal}}</th>
+        <th class="costprice costshow" scope="col">Final Cost : ₹ <span >{{finalcost}}</span></th>
+       
+      </tr>
+    </tfoot>
+  </table>
+</div>
+</div>
+<div class="card chart-container container">
+  <canvas id="chart"></canvas>
+</div>
+
+<script>
+   
+
+
+function showcost(){
+  document.getElementById("show").innerHTML='<i class="fas fa-eye-slash"></i>'
+  var elements = document.getElementsByClassName("costshow");
+
+// Loop through the elements and do something with them
+for (var i = 0; i < elements.length; i++) {
+    // Do something with each element
+    elements[i].classList.toggle("costprice")
+}
+
+};
+
+
+
+
+
+  
+
+  function convertTableToCSV(table) {
+    const csvRows = [];
+    const rows = table.getElementsByTagName('tr');
+  
+    for (let i = 0; i < rows.length; i++) {
+      const csvCells = [];
+      const cells = rows[i].querySelectorAll('td, th');
+  
+      for (let j = 0; j < Math.min(cells.length, 6); j++) {
+        const text = cells[j].innerText.replace(/"/g, '\\"');
+        csvCells.push(`"${text}"`);
+      }
+  
+      csvRows.push(csvCells.join(','));
+    }
+  
+    return csvRows.join('\n');
+  }
+  
+  // Sample HTML table
+  const table = document.getElementById('myTable');
+  
+  // Button element
+  const downloadButton = document.getElementById('downloadButton');
+  
+  // Event listener for button click
+  downloadButton.addEventListener('click', function() {
+    // Convert first five columns to CSV
+    const csvContent = convertTableToCSV(table);
+  
+    // Create a CSV file
+    const csvFileName = 'table.csv';
+    const csvBlob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  
+    // Create a download link
+    const downloadLink = document.createElement('a');
+    downloadLink.href = URL.createObjectURL(csvBlob);
+    downloadLink.download = csvFileName;
+    downloadLink.style.display = 'none';
+    document.body.appendChild(downloadLink);
+  
+    // Trigger the file download
+    downloadLink.click();
+  
+    // Clean up
+    document.body.removeChild(downloadLink);
+  });
+
+
+ 
+</script>
+
+{% endblock body %}

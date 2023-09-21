@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% block title %}Login{% endblock title %}
+{% block body %}
+<div style="margin-top:80px;" class="container">
+<form class="mt-5 mx-4" action="/login" method="post">
+   {% csrf_token %}
+    <h1>Login</h1>
+
+  <div class="mb-3">
+    <label for="username" class="form-label">Username</label>
+    <input name="username" for="username" type="text" class="form-control" id="username" placeholder="username">
+  </div>
+  <label for="inputPassword5" class="form-label">Password</label>
+<input name="password" type="password" id="myInput" class="form-control" aria-labelledby="passwordHelpBlock">
+<input type="checkbox" onclick="myFunction()">Show Password <br>
+<input name='next' type="hidden" value="{{next}}" >
+
+<button  type="submit" class="btn btn-primary mt-3">Login</button>
+
+</form>
+</div>
+<script>
+  function myFunction() {
+     var x = document.getElementById("myInput");
+     if (x.type === "password") {
+       x.type = "text";
+     } else {
+       x.type = "password";
+     }
+   }
+</script>
+ 
+{% endblock body %}

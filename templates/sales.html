@@ -1,0 +1,153 @@
+{% extends 'base.html' %}
+{% block title %}Sales{% endblock title %}
+{% block body %}
+
+
+<div style="margin-top:80px;" class="container overflow-hidden ">
+  <h5 class=" mt-2" >Total Items: <strong>({{sales|length}})</strong> </h5>
+  <div class="d-flex my-4">
+  <input type="text" placeholder="Search here..." oninput="handleSearch()" class="form-control " id="searchInput">
+  <div class="dropdown mx-2">
+    <a class="btn btn-secondary dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-filter" style="color: #ffffff;"></i> Sort by
+    </a>
+  
+    <ul class="dropdown-menu text-center">
+      <li><a class="dropdown-item text-success" href="/sales?sort=paid"><strong>PAID</strong></a></li>
+      <li><a class="dropdown-item text-danger" href="/sales?sort=due"><strong>DUE</strong></a></li>
+      <li><a class="dropdown-item" href="/sales?sort=new">Newest to Oldest</a></li>
+      <li><a class="dropdown-item" href="/sales?sort=old">Oldest to Newest</a></li>
+      <li><a class="dropdown-item" href="/sales?sort=high">Highest to Lowest</a></li>
+      <li><a class="dropdown-item" href="/sales?sort=low">Lowest to Highest</a></li>
+    </ul>
+  </div>
+</div>
+  <div class="accordion accordion-flush my-5" id="list">
+    {% for sale in sales %}
+    <div class="accordion-item">
+      <h2 class="accordion-header">
+        <button class="accordion-button collapsed " type="button" data-bs-toggle="collapse"
+          data-bs-target="#flush-collapse{{sale.id}}" aria-expanded="false" aria-controls="flush-collapse{{sale.id}}">
+<div class="w-100 d-flex justify-content-between">
+
+          <span class='mx-3'>Invoice No: <strong>#{{sale.invoice_no}}</strong></span> 
+  
+          <span>PO Number: <strong>
+              {{sale.po_number}}</strong></span>
+
+          {% if sale.invoice_status == 'Paid' %} <span class="mx-3 text-success "> Paid : <strong>
+            ₹ {{sale.paid_amt}}</strong> </span>{% else %} <span class="mx-3 text-danger "> Due : <strong>
+              ₹ {{sale.due_amt}}</strong> </span> {% endif %}
+
+
+          <span class="mx-3  {% if sale.invoice_status == 'Paid' %}text-success {% else %}text-danger {% endif %} ">
+            Status: <strong> {{sale.invoice_status}}</strong> </span>
+      </div>
+
+        </button>
+      </h2>
+      <div id="flush-collapse{{sale.id}}" class="accordion-collapse collapse" data-bs-parent="#accordionFlushExample">
+        
+
+        <div class="accordion-body p-3"><span class="mx-3 "> Invoice Number: <strong> {{sale.invoice_no}}</strong>
+        </span> <span class="mx-3 float-end "> PO Number: <strong> {{sale.po_number}}</strong> </span>
+          <div class="m-3 d-flex justify-content-between" >
+            <span class="mx-3"> Items: <strong> {{sale.quantity}}</strong> </span>
+          <span class="mx-3"> Date: <strong> {{sale.date}}</strong> </span>
+          <span class="mx-3"> Total: <strong> ₹{{sale.total}}</strong> </span>
+
+
+          </div>
+         </div>
+        <table class="table">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Quantity</th>
+              <th scope="col">Total</th>
+              
+            </tr>
+          </thead>
+          <tbody>
+            {% for product in sale.invoice_items.all %}
+
+            <tr>
+              <th scope="row">{{product.product.name|capfirst}}</th>
+
+              <td>{{product.quantity}}</td>
+              <td>₹{{product.price}}</td>
+            
+
+            </tr>
+
+            {% endfor %}
+          </tbody>
+        </table>
+        <div class="card">
+          <div class="card-header">
+            Customer Details
+          </div>
+          <div class="card-body">
+            <h5 class="card-title">Name: <strong>{{sale.customer.name|title}}</strong></h5>
+            <p class="card-text">Address: <strong>{{sale.customer.address|capfirst}}</strong></p>
+            <p class="card-text">GST No: <strong>{{sale.customer.gst_no}}</strong></p>
+            <a href="tel:{{sale.customer.phone}}" class="btn btn-primary">Call {{sale.customer.phone}}</a>
+            {% if ale.customer.whatsapp %}
+            <a href="https://wa.me/91{{sale.customer.whatsapp}}"
+              class="btn btn-success">Chat {{sale.customer.whatsapp}}</a>
+            {% else %}
+            <a href="https://wa.me/91{{sale.customer.phone}}" class="btn btn-success">Chat
+              {{sale.customer.phone}}</a>
+            {% endif %}
+          </div>
+        </div>
+        <p class='m-3 text-center '>Subtotal = <strong>₹{{sale.subtotal}}</strong></p>
+        {% if sale.discount != 0 %} <p class='m-3 text-center text-danger '>Discount = <strong> -
+          ₹{{sale.discount}}</strong></p> {% endif %}
+        <p class='m-3 text-center text-success '>Tax = <strong>+ ₹{{sale.tax}}</strong></p>
+        <h4 class='m-3 text-center text-success '>Total = <strong>₹{{sale.total}}</strong></h4>
+        <h4 class='m-3 text-center text-success '>Paid = <strong>₹{{sale.paid_amt}}</strong></h4>
+        {% if sale.due_amt == 0 %}{% else %}<h4 class='m-3 text-center text-danger '>Due =
+          <strong>₹{{sale.due_amt}}</strong></h4>
+        <p class='m-3 text-center text-danger '>Since<strong> {{sale.date|timesince}}</strong></p> {% endif %}
+       {% if sale.due_amt == 0 %} {% else %}
+        <form class="m-3 " action="/clear-due/{{sale.po_number}}/" method="post" >
+          {% csrf_token %}
+          <div class="mb-3">
+            <label for="exampleInputEmail1" class="form-label">Due Amount</label>
+            <input type="number" name="due" required min='0' value='{{sale.due_amt}}' max="{{sale.due_amt}}" class="form-control" id="due" >
+          </div>  
+          <button type="submit" class="btn btn-primary mb-3">Clear Due Amount</button>
+        </form>
+        {% endif %}
+        
+       <p class="text-center  m-4"> <a class="btn btn-primary text-center m-4"  href="/invoice/{{sale.po_number}}/">Download Invoice PDF</a>
+      </p>  
+      </div>
+
+    </div>
+    {% endfor %}
+        
+
+
+  </div>
+
+</div>
+<script>
+   function handleSearch() {
+    const searchInput = document.getElementById('searchInput').value.toLowerCase();
+    const listItems = document.querySelectorAll('#list div ');
+
+    listItems.forEach(item => {
+      const text = item.textContent.toLowerCase();
+      if (text.includes(searchInput)) {
+        item.style.display = 'block';
+
+
+      } else {
+        item.style.display = 'none';
+      }
+    });
+  };
+</script>
+{% endblock body %}

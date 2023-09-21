@@ -1,0 +1,209 @@
+{% extends 'base.html' %}
+{% block title %}Ledger{% endblock title %}
+{% block body %}
+<div style="margin-top:80px;" class="container">
+  
+    <div class="card text-bg-warning my-3 p-4">
+
+        <h5 class="card-title">Avaliable Balance :<strong>₹ {{balance}} </strong></h5>
+        <p class="card-text">Total Balance: <strong>₹ {{tlbalance}}</strong> (with dues <strong>({{dues}})</strong>)</p>
+
+    </div>
+    <div class="d-flex">
+    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary  mx-1" data-bs-toggle="modal" data-bs-target="#add">
+  + ADD MONEY
+  </button>
+  
+    <!-- Button trigger modal -->
+<button type="button" class="btn btn-primary mx-1" data-bs-toggle="modal" data-bs-target="#withdraw">
+WITHDRAW MONEY
+  </button>
+  
+  </div>
+  <div class="d-flex my-4">
+    <input type="text" placeholder="Search here..." oninput="handleSearch()" class="form-control mx-1 " id="searchInput">
+  <div class="dropdown mx-1">
+    <a class="btn btn-secondary dropdown-toggle mx-1" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+      <i class="fas fa-filter" style="color: #ffffff;"></i> Sort by
+    </a>
+  
+    <ul class="dropdown-menu text-center ">
+      <li><a class="dropdown-item text-success" href="/ledger?sort=paid"><strong>PAID</strong></a></li>
+      <li><a class="dropdown-item text-warning" href="/ledger?sort=due"><strong>DUE</strong></a></li>
+      <li><a class="dropdown-item text-danger" href="/ledger?sort=remove"><strong>WITHDRAWL</strong></a></li>
+      <li><a class="dropdown-item" href="/ledger?sort=new">Newest to Oldest</a></li>
+      <li><a class="dropdown-item" href="/ledger?sort=old">Oldest to Newest</a></li>
+      <li><a class="dropdown-item" href="/ledger?sort=high">Highest to Lowest</a></li>
+      <li><a class="dropdown-item" href="/ledger?sort=low">Lowest to Highest</a></li>
+    </ul>
+  </div>
+  </div>
+  <!-- Modal -->
+  <div class="modal fade" id="add" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Add Money</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="/add-money" method="post">
+                {% csrf_token %}
+            <div class="mb-3">
+                <label  class="form-label">Add Money</label>
+                <input type="number" min="0" required name='add' class="form-control" placeholder="Add Amount">
+              </div>
+              <input type="hidden" value="{{balance}}" name="total">
+              <div class="mb-3">
+                <label  class="form-label">Purpose</label>
+                <textarea required class="form-control" name="purpose" rows="3"></textarea>
+              </div>
+               <button type="submit" class="btn btn-primary">Add Money</button>
+            </form>
+        </div>
+        <div class="modal-footer">
+
+         
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  
+  <!-- Modal -->
+  <div class="modal fade" id="withdraw" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Withdraw Money</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <form action="/withdraw-money" method="post">
+                {% csrf_token %}
+                <input type="hidden" max="{{balance}}" value="{{balance}}" name="total">
+                <div class="mb-3">
+                    <label  class="form-label">Withdraw Money</label>
+                    <input type="number" max="{{balance}}" min="0" required name='withdraw' class="form-control" placeholder="Withdraw Amount">
+                  </div>
+                  <div class="mb-3">
+                    <label  class="form-label">Purpose</label>
+                    <textarea required class="form-control" name="purpose" rows="3"></textarea>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Withdraw Money</button>
+                </form>
+        </div>
+        <div class="modal-footer">
+          
+        </div>
+      </div>
+    </div>
+  </div>
+<div id="list">
+    {% for ledger in ledgers %}
+    <div class="lists p-1">
+    <hr>
+   
+        
+        
+      
+    <div class=" p-2 m-3">
+
+        {% if ledger.po_number %}
+        <div><span>PO No: <strong>{{ledger.po_number}}</strong></span><br>
+            <span>Purpose: <strong>{{ledger.purpose|capfirst}}</strong></span>
+        </div>
+        {% else %}
+        {% if ledger.add == 0 %}
+        {% else %}
+        <div><span><strong>Manually Added</strong></span><br>
+            <span>Purpose: <strong>{{ledger.purpose|capfirst}}</strong></span>
+        </div>
+        
+        {% endif %}
+        {% if ledger.remove == 0 %}
+        {% else %}
+        <div><span><strong>Manually Withdraw</strong></span><br>
+            <span>Purpose: <strong>{{ledger.purpose|capfirst}}</strong></span>
+        </div>
+        
+        {% endif %}
+       
+        
+        {% endif %}
+        <div>
+            <p class="">by <strong>{{ledger.user|title}}</strong></p>
+            
+        </div>
+
+
+
+        <div>
+
+            {% if ledger.remove == 0 %}
+
+            {% else %}
+
+
+            <h6 class="text-danger text-center"><strong>- {{ledger.remove}}</strong></h6>
+
+
+            {% endif %}
+
+            {% if ledger.add == 0 %}
+
+            {% else %}
+
+
+
+            <h6 class="text-success text-center "><strong>+ {{ledger.add}}</strong></h6>
+
+            {% endif %}
+            {% if ledger.due == 0 %}
+            {% else %}
+
+
+
+
+            <h6 class="text-warning text-center"><strong> {{ledger.due}}</strong></h6>
+         <p class="text-center" ><a href="/sales?pono={{ledger.po_number}}" class="btn btn-warning text-white text-center"
+        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+ <strong> Clear Due</strong>
+        </a></p>   
+
+            {% endif %}
+        </div>
+ {% if ledger.customer %}
+        <div class="">
+            <span>Customer: <strong>{{ledger.customer.name|title}}</strong></span>
+        </div>
+{% endif %}
+        <div class="float-end">
+
+            <span>On <strong>{{ledger.date}}</strong></span>
+        </div>
+    </div>
+  </div>
+    {% endfor %}
+  </div>
+</div>
+<script>
+  function handleSearch() {
+   const searchInput = document.getElementById('searchInput').value.toLowerCase();
+   const listItems = document.querySelectorAll('#list .lists ');
+
+   listItems.forEach(item => {
+     const text = item.textContent.toLowerCase();
+     if (text.includes(searchInput)) {
+       item.style.display = 'block';
+
+
+     } else {
+       item.style.display = 'none';
+     }
+   });
+ };
+</script>
+{% endblock body %}
